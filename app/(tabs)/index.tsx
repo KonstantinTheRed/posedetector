@@ -1,4 +1,5 @@
 import { CameraFeed } from "@/components/widgets/CameraFeed";
+import PoseFeed from "@/components/widgets/PoseFeed";
 import { StyleSheet, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -13,7 +14,7 @@ export default function HomeScreen() {
         <View style={styles.PerformanceStatus}></View>
       </View>
       <View style={styles.Viewport}>
-        <Text style={styles.text}>This view fills the remaining height.</Text>
+        <PoseFeed />
       </View>
     </SafeAreaView>
   );

@@ -7,6 +7,17 @@ type Props = {
   borderColor?: string;
 };
 export function CameraFeed(props: Props) {
+  const handleLoad = () => {
+    console.log("Video loaded successfully!");
+  };
+
+  const handleError = (error: any) => {
+    console.log("Video failed to load!", error);
+    // Log the error details to see what's wrong
+    console.log("Error details:", error.error);
+    console.log("Error text:", error.errorText);
+  };
+
   return (
     <View
       style={[
@@ -20,10 +31,13 @@ export function CameraFeed(props: Props) {
       ]}
     >
       <Video
-        source={require("./my-video.mp4")} // Your local video file
+        source={{ uri: "/videos/bicepcurl.mp4" }}
         style={styles.VideoPlayer}
-        resizeMode="contain" // Adjust how the video fits its container
-        controls={true} // Display playback controls (play/pause, seek bar)
+        resizeMode="contain"
+        onLoad={handleLoad}
+        onError={handleError}
+        volume={0}
+        paused={false}
       />
     </View>
   );
@@ -31,12 +45,11 @@ export function CameraFeed(props: Props) {
 const styles = StyleSheet.create({
   Viewport: {
     backgroundColor: "black",
-    borderRadius: "10px",
-
+    borderRadius: 10,
     borderWidth: 3,
+    overflow: "hidden",
   },
   VideoPlayer: {
     flex: 1,
-    width: "100%",
   },
 });
