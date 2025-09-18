@@ -126,18 +126,15 @@ function Overlay(props: PoseOverlayProps) {
     renderLoop();
   }, [props.detector, props.CameraRef]);
 
-  return (
-    <canvas
-      ref={CanvasRef}
-      style={{
-        position: "absolute",
-        zIndex: 1,
-        height: "100%",
-      }}
-    />
-  );
+  return <canvas ref={CanvasRef} style={styles.ActiveOverlay} />;
 }
 
 //
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  ActiveOverlay: {
+    position: "absolute",
+    zIndex: 1,
+    height: "100%",
+  },
+});

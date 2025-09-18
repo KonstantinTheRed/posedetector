@@ -14,9 +14,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function HomeScreen() {
   const CameraRef = useRef(null);
-  const [PoseModel, setModel] = useState({
-    device: "cpu",
-  } as PoseModel);
+  const [PoseModel, setModel] = useState({} as PoseModel);
   const [PoseState, setPoseState] = useState(null);
 
   useEffect(() => {
