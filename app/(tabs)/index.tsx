@@ -1,20 +1,50 @@
-import { CameraFeed } from "@/components/widgets/CameraFeed";
+import { VideoFeed } from "@/components/widgets/VideoFeed";
 import PoseFeed from "@/components/widgets/PoseFeed";
 import { StyleSheet, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  getCameraFeed,
+  initializeModel,
+  PoseModel,
+} from "../../lib/PoseEngine";
+import { useEffect, useRef, useState } from "react";
 
 export default function HomeScreen() {
+  const CameraRef = useRef(null);
+  const [PoseModel, setModel] = useState({
+    device: "cpu",
+  } as PoseModel);
+  const [PoseState, setPoseState] = useState(null);
+
+  useEffect(() => {
+    if (PoseModel?.detector) return;
+    getCameraFeed(CameraRef).then(async (source) => {
+      if (!source) throw Error("Cannot access Camera feed.");
+
+      const pose_model = await initializeModel(source);
+
+      const { device, model } = pose_model;
+      console.log(pose_model);
+      setModel(pose_model);
+    });
+  }, []);
+
   return (
     <SafeAreaView style={styles.SafeArea}>
       <View style={styles.Header}>
         <View style={styles.WorkoutStatus}>
           <Text style={styles.WorkoutTitle}>Bicep Curls</Text>
-          <CameraFeed height="auto" width="100%" flex={8} />
+          <VideoFeed height="auto" width="100%" flex={8} />
         </View>
         <View style={styles.PerformanceStatus}></View>
       </View>
       <View style={styles.Viewport}>
-        <PoseFeed />
+        <PoseFeed
+          CameraRef={CameraRef}
+          device={PoseModel.device}
+          detector={PoseModel?.detector}
+          source={PoseModel?.source}
+        />
       </View>
     </SafeAreaView>
   );
