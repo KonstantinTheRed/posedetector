@@ -11,7 +11,7 @@ export interface PoseModel {
   device: DeviceTypes;
   model?: poseDetection.SupportedModels;
   detector?: poseDetection.PoseDetector;
-  source?: HTMLVideoElement;
+  source?: React.RefObject<null>;
 }
 
 export const SkeletonMap = {
@@ -46,8 +46,13 @@ export const SkeletonMap = {
   rightWrist_to_rightIndex: [16, 20],
 };
 
-export async function initializeModel(source: HTMLVideoElement) {
+export async function initializeModel(CameraRef: React.RefObject<null>) {
   //Check Accessible Hardware
+  try {
+    await tf.setBackend("webgl"); // NEW
+  } catch {
+    await tf.setBackend("cpu"); // minimal, works without extra deps
+  }
   await tf.ready();
   const device = tf.getBackend() as DeviceTypes;
   console.log(device);
@@ -68,7 +73,7 @@ export async function initializeModel(source: HTMLVideoElement) {
     device: device,
     model: model,
     detector: detector,
-    source: source,
+    source: CameraRef,
   };
 }
 //Platform Specific

@@ -21,7 +21,7 @@ export default function HomeScreen() {
     getCameraFeed(CameraRef).then(async (source) => {
       if (!source) throw Error("Cannot access Camera feed.");
 
-      const pose_model = await initializeModel(source);
+      const pose_model = await initializeModel(CameraRef);
 
       const { device, model } = pose_model;
       console.log(pose_model);
@@ -43,7 +43,6 @@ export default function HomeScreen() {
           CameraRef={CameraRef}
           device={PoseModel.device}
           detector={PoseModel?.detector}
-          source={PoseModel?.source}
         />
       </View>
     </SafeAreaView>

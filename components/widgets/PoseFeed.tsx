@@ -4,22 +4,22 @@ import * as PoseDetection from "@tensorflow-models/pose-detection";
 import { DeviceTypes, SkeletonMap } from "@/lib/PoseEngine";
 import CameraFeed from "./CameraFeed";
 import { useEffect, useRef } from "react";
+import Webcam from "react-webcam";
 //
 
 interface PoseFeedProps {
   CameraRef: React.RefObject<null>;
   device: DeviceTypes;
   detector?: PoseDetection.PoseDetector;
-  source?: HTMLVideoElement;
 }
 
 export default function PoseFeed(props: PoseFeedProps) {
   return (
     <View style={styles.Container}>
       <PoseOverlay
-        source={props?.source}
         device={props.device}
         detector={props?.detector}
+        CameraRef={props.CameraRef}
       />
       <CameraFeed CameraRef={props.CameraRef} />
     </View>
@@ -27,7 +27,7 @@ export default function PoseFeed(props: PoseFeedProps) {
 }
 
 interface PoseOverlayProps {
-  source?: HTMLVideoElement;
+  CameraRef?: React.RefObject<null>;
   device?: DeviceTypes;
   detector?: PoseDetection.PoseDetector;
 }
@@ -36,7 +36,7 @@ function PoseOverlay(props: PoseOverlayProps) {
   //PLATFORM DEPENDENT
   //Pose Overlay Switch
   let Overlay = OverlayPending;
-  if (props.source) {
+  if (props.CameraRef?.current) {
     switch (props.device) {
       case "webgpu":
         Overlay = WebGPUOverlay;
@@ -49,7 +49,7 @@ function PoseOverlay(props: PoseOverlayProps) {
     }
   }
 
-  return <Overlay source={props.source} detector={props.detector} />;
+  return <Overlay CameraRef={props.CameraRef} detector={props.detector} />;
 }
 
 //PLATFORM DEPENDENT
@@ -112,22 +112,31 @@ function WebGPUOverlay(props: PoseOverlayProps) {
 
   useEffect(() => {
     const canvas = CanvasRef.current;
-    const source = props.source;
+    const CameraRef = props.CameraRef;
+    console.log(props.CameraRef);
+    if (!props.CameraRef) {
+      return;
+    }
+    if (!props.CameraRef.current) return;
+
     const detector = props.detector;
 
-    if (!canvas || !source || !detector) {
+    if (!canvas || !detector) {
       return;
     }
 
-    canvas.width = source.videoWidth;
-    canvas.height = source.videoHeight;
+    canvas.width = CameraRef.current.video.videoWidth;
+    canvas.height = CameraRef.current.video.videoHeight;
 
     let animationFrameId: number;
 
     const renderLoop = async () => {
       // FIX: Add check for videoWidth to ensure the frame is fully loaded
-      if (source.readyState === 4 && source.videoWidth > 0) {
-        const poses = await detector.estimatePoses(source);
+      if (
+        CameraRef.current.video.readyState === 4 &&
+        CameraRef.current.video.videoWidth > 0
+      ) {
+        const poses = await detector.estimatePoses(CameraRef.current.video);
 
         // Log the raw output directly, before any drawing logic or confidence checks
         console.log("Raw pose output:", poses);
@@ -151,7 +160,7 @@ function WebGPUOverlay(props: PoseOverlayProps) {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [props.detector, props.source]);
+  }, [props.detector, props.CameraRef]);
 
   return (
     <canvas
