@@ -12,10 +12,6 @@ import {
 } from "../../lib/PoseEngine";
 import { useEffect, useRef, useState } from "react";
 
-//WEB ONLY COMPONENT
-import "@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.js";
-//
-
 export default function HomeScreen() {
   const CameraRef = useRef(null);
   const [PoseModel, setModel] = useState({
@@ -30,6 +26,7 @@ export default function HomeScreen() {
       if (!source) throw Error("Cannot access Camera feed.");
 
       const pose_model = await initializeModel(source);
+
       setModel(pose_model);
     });
   }, []);
@@ -47,8 +44,8 @@ export default function HomeScreen() {
         <PoseFeed
           CameraRef={CameraRef}
           source={PoseModel?.source}
-          device={PoseModel.device}
           detector={PoseModel?.detector}
+          modelClass={PoseModel.modelClass}
         />
       </View>
     </SafeAreaView>

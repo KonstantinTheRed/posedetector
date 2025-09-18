@@ -1,22 +1,20 @@
 //MOBILE AND WEB COMPONENT
 import { View, Text, StyleSheet } from "react-native";
 import * as PoseDetection from "@tensorflow-models/pose-detection";
-import { DeviceTypes } from "@/lib/PoseEngine";
-import { useEffect, useRef } from "react";
-import { MoveNet } from "@/lib/models/MoveNet";
 //
 
 interface PoseOverlayProps {
   source?: HTMLVideoElement;
-  device?: DeviceTypes;
   detector?: PoseDetection.PoseDetector;
+  modelClass?: any;
 }
 
 export default function PoseOverlay(props: PoseOverlayProps) {
   //MOBILE AND WEB COMPONENT
   let Overlay = OverlayPending;
   if (props.source) {
-    Overlay = ActivePoseOverlay;
+    console.log(props.modelClass.Overlay);
+    Overlay = props.modelClass.Overlay;
   }
   return <Overlay source={props.source} detector={props.detector} />;
 }
@@ -32,54 +30,6 @@ function OverlayPending(props: PoseOverlayProps) {
   );
 }
 
-//WEB ONLY COMPONENT
-function ActivePoseOverlay(props: PoseOverlayProps) {
-  const CanvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = CanvasRef.current;
-
-    const source = props.source;
-    if (!source) {
-      return;
-    }
-
-    const detector = props.detector;
-
-    if (!canvas || !detector) {
-      return;
-    }
-
-    canvas.width = source.videoWidth;
-    canvas.height = source.videoHeight;
-
-    let animationFrameId: number;
-
-    const renderLoop = async () => {
-      const video = source as HTMLVideoElement | null;
-      if (
-        video &&
-        video.readyState >= 3 &&
-        video.videoWidth &&
-        video.videoWidth
-      ) {
-        const poses = await detector.estimatePoses(video);
-        MoveNet.drawCanvas(poses, canvas);
-      }
-
-      animationFrameId = requestAnimationFrame(renderLoop);
-    };
-
-    renderLoop();
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [props.detector, props.source]);
-
-  return <canvas ref={CanvasRef} style={styles.ActiveOverlay} />;
-}
-
 //MOBILE AND WEB COMPONENT
 const styles = StyleSheet.create({
   PendingOverlay: {
@@ -91,11 +41,5 @@ const styles = StyleSheet.create({
     zIndex: 2,
     alignItems: "center",
     justifyContent: "center",
-  },
-  ActiveOverlay: {
-    position: "absolute",
-    zIndex: 1,
-    height: "100%",
-    objectFit: "contain",
   },
 });

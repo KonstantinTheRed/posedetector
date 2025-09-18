@@ -9,17 +9,17 @@ import PoseOverlay from "./PoseOverlay";
 interface PoseFeedProps {
   CameraRef: React.RefObject<null>;
   source?: HTMLVideoElement;
-  device: DeviceTypes;
   detector?: PoseDetection.PoseDetector;
+  modelClass?: any;
 }
 
 export default function PoseFeed(props: PoseFeedProps) {
   return (
     <View style={styles.Container}>
       <PoseOverlay
-        device={props.device}
         detector={props?.detector}
         source={props.source}
+        modelClass={props?.modelClass}
       />
       <CameraFeed CameraRef={props.CameraRef} />
     </View>
