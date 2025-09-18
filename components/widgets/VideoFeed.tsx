@@ -1,3 +1,4 @@
+//MOBILE AND WEB COMPONENT
 import { DimensionValue, StyleSheet, View } from "react-native";
 import Video from "react-native-video";
 type Props = {
@@ -12,8 +13,7 @@ export function VideoFeed(props: Props) {
   };
 
   const handleError = (error: any) => {
-    console.log("Video failed to load!", error);
-    // Log the error details to see what's wrong
+    console.log("Video failed to load!", error); // Log the error details to see what's wrong
     console.log("Error details:", error.error);
     console.log("Error text:", error.errorText);
   };
@@ -30,6 +30,7 @@ export function VideoFeed(props: Props) {
         },
       ]}
     >
+           {" "}
       <Video
         source={{ uri: "/videos/bicepcurl.mp4" }}
         style={styles.VideoPlayer}
@@ -39,6 +40,7 @@ export function VideoFeed(props: Props) {
         volume={0}
         paused={false}
       />
+         {" "}
     </View>
   );
 }

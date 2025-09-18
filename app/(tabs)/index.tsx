@@ -1,16 +1,20 @@
-import { VideoFeed } from "@/components/widgets/VideoFeed";
-import PoseFeed from "@/components/widgets/PoseFeed";
+//MOBILE AND WEB COMPONENT
 import { StyleSheet, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+//
 
-import "@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.js";
-
+import { VideoFeed } from "@/components/widgets/VideoFeed";
+import PoseFeed from "@/components/widgets/PoseFeed";
 import {
   getCameraFeed,
   initializeModel,
   PoseModel,
 } from "../../lib/PoseEngine";
 import { useEffect, useRef, useState } from "react";
+
+//WEB ONLY COMPONENT
+import "@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.js";
+//
 
 export default function HomeScreen() {
   const CameraRef = useRef(null);
@@ -22,9 +26,10 @@ export default function HomeScreen() {
   useEffect(() => {
     if (PoseModel?.detector) return;
     getCameraFeed(CameraRef).then(async (source) => {
+      console.log(source);
       if (!source) throw Error("Cannot access Camera feed.");
 
-      const pose_model = await initializeModel(CameraRef);
+      const pose_model = await initializeModel(source);
 
       const { device, model } = pose_model;
       console.log(pose_model);
@@ -44,6 +49,7 @@ export default function HomeScreen() {
       <View style={styles.Viewport}>
         <PoseFeed
           CameraRef={CameraRef}
+          source={PoseModel?.source}
           device={PoseModel.device}
           detector={PoseModel?.detector}
         />

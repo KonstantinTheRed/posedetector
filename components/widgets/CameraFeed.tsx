@@ -1,8 +1,10 @@
-//Web Libraries
+//WEB ONLY COMPONENT
 import Webcam from "react-webcam";
 //
 
+//MOBILE AND WEB COMPONENT
 import { StyleSheet } from "react-native";
+//
 interface CameraFeedProps {
   CameraRef: React.RefObject<null>;
 }
@@ -18,12 +20,10 @@ export default function CameraFeed(props: CameraFeedProps) {
   );
 }
 const styles = StyleSheet.create({
-  //PLATFORM DEPENDENT
+  //WEB ONLY COMPONENT
   webcam: {
     position: "absolute",
-    width: "100%",
-    height: "100%",
     objectFit: "cover",
-  },
-  //
+    height: "100%",
+  }, //
 });
