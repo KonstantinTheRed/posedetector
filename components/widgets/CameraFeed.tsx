@@ -7,7 +7,15 @@ interface CameraFeedProps {
   CameraRef: React.RefObject<null>;
 }
 export default function CameraFeed(props: CameraFeedProps) {
-  return <Webcam ref={props.CameraRef} audio={false} style={styles.webcam} />;
+  return (
+    <Webcam
+      ref={props.CameraRef}
+      audio={false}
+      screenshotFormat="image/jpeg"
+      videoConstraints={{ facingMode: "user" }}
+      style={styles.webcam}
+    />
+  );
 }
 const styles = StyleSheet.create({
   //PLATFORM DEPENDENT
