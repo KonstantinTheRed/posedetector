@@ -2,6 +2,9 @@ import { VideoFeed } from "@/components/widgets/VideoFeed";
 import PoseFeed from "@/components/widgets/PoseFeed";
 import { StyleSheet, View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import "@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.js";
+
 import {
   getCameraFeed,
   initializeModel,

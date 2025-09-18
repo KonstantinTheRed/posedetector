@@ -1,12 +1,16 @@
-//Platform Agnostic Libraries
 import * as tf from "@tensorflow/tfjs-core";
-import * as poseDetection from "@tensorflow-models/pose-detection";
-//
+
 //Web Libraries
-import "@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.js";
+// import "@mediapipe/pose";
+import "@tensorflow/tfjs-converter";
+import "@tensorflow/tfjs-backend-webgl";
 //
 
-export type DeviceTypes = "webgpu" | "cpu" | "wasm";
+//Platform Agnostic Libraries
+import * as poseDetection from "@tensorflow-models/pose-detection";
+//
+
+export type DeviceTypes = "webgpu" | "cpu" | "wasm" | "webgl";
 export interface PoseModel {
   device: DeviceTypes;
   model?: poseDetection.SupportedModels;
@@ -58,16 +62,16 @@ export async function initializeModel(CameraRef: React.RefObject<null>) {
   console.log(device);
 
   //Configure Model
-  const model = poseDetection.SupportedModels.BlazePose;
+  const model = poseDetection.SupportedModels.MoveNet;
 
   //Configure Detector
   const detectorConfig = {
     runtime: "tfjs",
+    modelType: "lite",
     enableSmoothing: true,
-    modelType: "full",
   };
 
-  const detector = await poseDetection.createDetector(model, detectorConfig);
+  const detector = await poseDetection.createDetector(model);
   if (!detector) throw Error("Cannot inititialize detector.");
   return {
     device: device,

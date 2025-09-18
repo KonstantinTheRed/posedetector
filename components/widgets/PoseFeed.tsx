@@ -4,7 +4,7 @@ import * as PoseDetection from "@tensorflow-models/pose-detection";
 import { DeviceTypes, SkeletonMap } from "@/lib/PoseEngine";
 import CameraFeed from "./CameraFeed";
 import { useEffect, useRef } from "react";
-import Webcam from "react-webcam";
+
 //
 
 interface PoseFeedProps {
@@ -37,16 +37,7 @@ function PoseOverlay(props: PoseOverlayProps) {
   //Pose Overlay Switch
   let Overlay = OverlayPending;
   if (props.CameraRef?.current) {
-    switch (props.device) {
-      case "webgpu":
-        Overlay = WebGPUOverlay;
-        break;
-      case "cpu":
-        Overlay = CPUOverlay;
-        break;
-      default:
-        break;
-    }
+    Overlay = ActivePoseOverlay;
   }
 
   return <Overlay CameraRef={props.CameraRef} detector={props.detector} />;
@@ -107,7 +98,7 @@ const drawCanvas = (
   }
 };
 
-function WebGPUOverlay(props: PoseOverlayProps) {
+function ActivePoseOverlay(props: PoseOverlayProps) {
   const CanvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -132,24 +123,13 @@ function WebGPUOverlay(props: PoseOverlayProps) {
 
     const renderLoop = async () => {
       // FIX: Add check for videoWidth to ensure the frame is fully loaded
-      if (
-        CameraRef.current.video.readyState === 4 &&
-        CameraRef.current.video.videoWidth > 0
-      ) {
-        const poses = await detector.estimatePoses(CameraRef.current.video);
-
-        // Log the raw output directly, before any drawing logic or confidence checks
-        console.log("Raw pose output:", poses);
-
-        if (poses && poses.length > 0) {
-          console.log(
-            "POSES DETECTED. The issue is with the drawing or confidence threshold."
-          );
-        } else {
-          console.log(
-            "NO POSES DETECTED. The issue is with the video input to the model."
-          );
-        }
+      const v = CameraRef.current?.video as HTMLVideoElement | null;
+      if (!v || v.readyState < 2 || v.videoWidth === 0 || v.videoHeight === 0) {
+        // skip this frame
+      } else {
+        const poses = await detector.estimatePoses(v);
+        console.log("Raw pose output:", poses.length);
+        drawCanvas(poses, CameraRef.current?.video, canvas);
       }
 
       animationFrameId = requestAnimationFrame(renderLoop);
@@ -177,9 +157,6 @@ function WebGPUOverlay(props: PoseOverlayProps) {
   );
 }
 
-function CPUOverlay(props: PoseOverlayProps) {
-  return <></>;
-}
 //
 
 const styles = StyleSheet.create({
