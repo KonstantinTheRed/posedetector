@@ -1,13 +1,11 @@
-//Web Libraries
-import "@tensorflow/tfjs-backend-webgl";
-import * as tfwebgpu from "@tensorflow/tfjs-backend-webgpu";
-//
-
 //Platform Agnostic Libraries
 import * as tf from "@tensorflow/tfjs-core";
 import * as poseDetection from "@tensorflow-models/pose-detection";
-import Webcam from "react-webcam";
 //
+//Web Libraries
+import "@tensorflow/tfjs-backend-webgl/dist/tf-backend-webgl.js";
+//
+
 export type DeviceTypes = "webgpu" | "cpu" | "wasm";
 export interface PoseModel {
   device: DeviceTypes;
