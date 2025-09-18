@@ -30,9 +30,6 @@ export default function HomeScreen() {
       if (!source) throw Error("Cannot access Camera feed.");
 
       const pose_model = await initializeModel(source);
-
-      const { device, model } = pose_model;
-      console.log(pose_model);
       setModel(pose_model);
     });
   }, []);
